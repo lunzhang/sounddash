@@ -10,11 +10,14 @@ export default class GroundGroup extends Phaser.Group{
     }
 
     generateGround(){
-        let amount = Math.ceil(this.game.width / 50);
+        let amount = Math.ceil(this.game.width / 100);
         for(let i = 0;i<amount;i++){
-          let ground = new Ground(this.game,i*50,this.game.height);
-          this.game.add.existing(ground);
-          this.add(ground);
+          let topGround = new Ground(this.game,i*100,100);
+          this.game.add.existing(topGround);
+          this.add(topGround);
+          let bottomGround = new Ground(this.game,i*100,this.game.height-50);
+          this.game.add.existing(bottomGround);
+          this.add(bottomGround);
         }
     }
 }

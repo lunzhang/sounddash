@@ -9,7 +9,7 @@ export default class Ground extends Phaser.Sprite{
       this.body.allowGravity = false;
       this.body.immovable = true;
       this.height = 50;
-      this.width = 50;
+      this.width = 100;
   }
 
 }

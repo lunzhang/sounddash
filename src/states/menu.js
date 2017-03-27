@@ -7,7 +7,7 @@ export default class MenuState extends Phaser.State{
 
   create(){
     //add detail
-    let detail = this.game.add.text(this.game.world.centerX, 100,
+    let detail = this.game.add.text(this.game.world.centerX, 130,
       "Make sound to move the person",{
       fill:'#ffffff',
       align: "center"
@@ -15,7 +15,7 @@ export default class MenuState extends Phaser.State{
     detail.anchor.set(0.5);
 
     //add start
-    let start = this.game.add.text(this.game.world.centerX, 150,
+    let start = this.game.add.text(this.game.world.centerX, 180,
       "Start Game",{
       fill:'#4CAF50',
       align: "center"
@@ -27,7 +27,7 @@ export default class MenuState extends Phaser.State{
     });
 
     //add warning
-    let warning = this.game.add.text(this.game.world.centerX, this.game.world.centerY+100,
+    let warning = this.game.add.text(this.game.world.centerX, 230,
       "Please enable microphone to play the game",{
       fontSize:'16px',
       fill:'#ffffff',
@@ -49,17 +49,13 @@ export default class MenuState extends Phaser.State{
     this.game.physics.arcade.gravity.y = 300;
 
     //create person
-    this.person = new Person(this.game,this.game.world.centerX,this.game.world.centerY*1.5);
+    this.person = new Person(this.game,this.game.world.centerX/2,this.game.height-150);
     this.game.add.existing(this.person);
 
   }
 
   update(){
-      this.game.physics.arcade.collide(this.person, this.ground, this.jump,null,this);
-  }
-
-  jump(){
-    this.person.jump(255);
+      this.game.physics.arcade.collide(this.person, this.ground);
   }
 
 }

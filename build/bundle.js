@@ -6,9 +6,9 @@ webpackJsonp([0],[
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_phaser__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_phaser___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_phaser__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__states_boot_js__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__states_game_js__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__states_menu_js__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__states_boot_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__states_game_js__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__states_menu_js__ = __webpack_require__(20);
 
 
 
@@ -76,7 +76,7 @@ class Box extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Sprite{
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_phaser__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_phaser___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_phaser__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ground_js__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ground_js__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__box_js__ = __webpack_require__(3);
 
 
@@ -90,11 +90,14 @@ class GroundGroup extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Group{
     }
 
     generateGround(){
-        let amount = Math.ceil(this.game.width / 50);
+        let amount = Math.ceil(this.game.width / 100);
         for(let i = 0;i<amount;i++){
-          let ground = new __WEBPACK_IMPORTED_MODULE_1__ground_js__["a" /* default */](this.game,i*50,this.game.height);
-          this.game.add.existing(ground);
-          this.add(ground);
+          let topGround = new __WEBPACK_IMPORTED_MODULE_1__ground_js__["a" /* default */](this.game,i*100,100);
+          this.game.add.existing(topGround);
+          this.add(topGround);
+          let bottomGround = new __WEBPACK_IMPORTED_MODULE_1__ground_js__["a" /* default */](this.game,i*100,this.game.height-50);
+          this.game.add.existing(bottomGround);
+          this.add(bottomGround);
         }
     }
 }
@@ -142,10 +145,10 @@ class Person extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Sprite{
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(9);
+var content = __webpack_require__(10);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(14)(content, {});
+var update = __webpack_require__(15)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -163,9 +166,76 @@ if(false) {
 
 /***/ }),
 /* 9 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style_scss__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__style_scss__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_main_js__ = __webpack_require__(1);
+
+
+
+class App{
+
+  constructor(){
+    navigator.getUserMedia = (navigator.getUserMedia ||
+      navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||
+      navigator.msGetUserMedia);
+
+    navigator.mediaDevices.getUserMedia({audio:true}).then((stream)=>{
+      this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      this.analyser = this.audioCtx.createAnalyser();
+      this.analyser.fftSize = 32;
+      let source = this.audioCtx.createMediaStreamSource(stream);
+      source.connect(this.analyser);
+      this.frequencyData = new Uint8Array(this.analyser.frequencyBinCount);
+      this.analyser.getByteTimeDomainData(this.frequencyData);
+      this.animate();
+    }).catch((err)=>{
+      console.log(err);
+    });
+
+    this.soundDash = new __WEBPACK_IMPORTED_MODULE_1__src_main_js__["a" /* default */](600,400);
+
+  }
+
+  animate(){
+
+    requestAnimationFrame(()=>{
+      this.animate();
+    });
+
+    this.analyser.getByteFrequencyData(this.frequencyData);
+    let state = this.soundDash.state.getCurrentState();
+
+    if(state.key === 'game'){
+        let sound = 0;
+        for(let i = 0;i<this.frequencyData.length;i++){
+          sound+=this.frequencyData[i];
+        }
+        sound = sound / this.frequencyData.length;
+        if(this.soundDash.device.desktop && sound > 100){
+          state.person.jump(sound);
+        }else if(sound > 50){
+          state.person.jump(sound*2);
+        }
+      }
+  }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["App"] = App;
+
+
+
+const app = new App();
+
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(10)();
+exports = module.exports = __webpack_require__(11)();
 // imports
 
 
@@ -176,7 +246,7 @@ exports.push([module.i, "html, body {\n  height: 100%;\n  margin: 0; }\n\n#world
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 /*
@@ -232,10 +302,10 @@ module.exports = function() {
 
 
 /***/ }),
-/* 11 */,
 /* 12 */,
 /* 13 */,
-/* 14 */
+/* 14 */,
+/* 15 */
 /***/ (function(module, exports) {
 
 /*
@@ -487,7 +557,7 @@ function updateLink(linkElement, obj) {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -516,7 +586,7 @@ class BoxGroup extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Group{
 
     generateBoxes(){
         let box = this.getFirstDead();
-        let position = this.game.rnd.integerInRange(0,6);
+        let position = this.game.rnd.integerInRange(2,5);
         box.revive();
         box.position.x = 0;
         box.position.y = position * 50;
@@ -528,7 +598,7 @@ class BoxGroup extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Group{
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -545,7 +615,7 @@ class Ground extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Sprite{
       this.body.allowGravity = false;
       this.body.immovable = true;
       this.height = 50;
-      this.width = 50;
+      this.width = 100;
   }
 
 }
@@ -554,7 +624,7 @@ class Ground extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Sprite{
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -608,7 +678,7 @@ class BootState extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.State{
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -616,7 +686,7 @@ class BootState extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.State{
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_phaser___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_phaser__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sprites_person_js__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__sprites_groundgroup_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_boxgroup_js__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sprites_boxgroup_js__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__main_js__ = __webpack_require__(1);
 
 
@@ -629,12 +699,12 @@ class GameState extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.State{
   create(){
 
     //person
-    this.person = new __WEBPACK_IMPORTED_MODULE_1__sprites_person_js__["a" /* default */](this.game,this.game.world.centerX,this.game.world.centerY);
+    this.person = new __WEBPACK_IMPORTED_MODULE_1__sprites_person_js__["a" /* default */](this.game,this.game.world.centerX/2,this.game.height-150);
     this.game.add.existing(this.person);
 
     //boxes
     this.boxGroup = new __WEBPACK_IMPORTED_MODULE_3__sprites_boxgroup_js__["a" /* default */](this.game);
-    this.boxGenerator = this.game.time.events.loop(600,this.generateBox,this);
+    this.boxGenerator = this.game.time.events.loop(777,this.generateBox,this);
     this.boxGenerator.timer.start();
     this.generateBox();
 
@@ -681,7 +751,7 @@ class GameState extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.State{
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -699,7 +769,7 @@ class MenuState extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.State{
 
   create(){
     //add detail
-    let detail = this.game.add.text(this.game.world.centerX, 100,
+    let detail = this.game.add.text(this.game.world.centerX, 130,
       "Make sound to move the person",{
       fill:'#ffffff',
       align: "center"
@@ -707,7 +777,7 @@ class MenuState extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.State{
     detail.anchor.set(0.5);
 
     //add start
-    let start = this.game.add.text(this.game.world.centerX, 150,
+    let start = this.game.add.text(this.game.world.centerX, 180,
       "Start Game",{
       fill:'#4CAF50',
       align: "center"
@@ -719,7 +789,7 @@ class MenuState extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.State{
     });
 
     //add warning
-    let warning = this.game.add.text(this.game.world.centerX, this.game.world.centerY+100,
+    let warning = this.game.add.text(this.game.world.centerX, 230,
       "Please enable microphone to play the game",{
       fontSize:'16px',
       fill:'#ffffff',
@@ -741,17 +811,13 @@ class MenuState extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.State{
     this.game.physics.arcade.gravity.y = 300;
 
     //create person
-    this.person = new __WEBPACK_IMPORTED_MODULE_1__sprites_person_js__["a" /* default */](this.game,this.game.world.centerX,this.game.world.centerY*1.5);
+    this.person = new __WEBPACK_IMPORTED_MODULE_1__sprites_person_js__["a" /* default */](this.game,this.game.world.centerX/2,this.game.height-150);
     this.game.add.existing(this.person);
 
   }
 
   update(){
-      this.game.physics.arcade.collide(this.person, this.ground, this.jump,null,this);
-  }
-
-  jump(){
-    this.person.jump(255);
+      this.game.physics.arcade.collide(this.person, this.ground);
   }
 
 }
@@ -759,72 +825,5 @@ class MenuState extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.State{
 
 
 
-/***/ }),
-/* 20 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style_scss__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__style_scss__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_main_js__ = __webpack_require__(1);
-
-
-
-class App{
-
-  constructor(){
-    navigator.getUserMedia = (navigator.getUserMedia ||
-      navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||
-      navigator.msGetUserMedia);
-
-    navigator.mediaDevices.getUserMedia({audio:true}).then((stream)=>{
-      this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      this.analyser = this.audioCtx.createAnalyser();
-      this.analyser.fftSize = 32;
-      let source = this.audioCtx.createMediaStreamSource(stream);
-      source.connect(this.analyser);
-      this.frequencyData = new Uint8Array(this.analyser.frequencyBinCount);
-      this.analyser.getByteTimeDomainData(this.frequencyData);
-      this.animate();
-    }).catch((err)=>{
-      console.log(err);
-    });
-
-    this.soundDash = new __WEBPACK_IMPORTED_MODULE_1__src_main_js__["a" /* default */](600,400);
-
-  }
-
-  animate(){
-
-    requestAnimationFrame(()=>{
-      this.animate();
-    });
-
-    this.analyser.getByteFrequencyData(this.frequencyData);
-    let state = this.soundDash.state.getCurrentState();
-
-    if(state.key === 'game'){
-        let sound = 0;
-        for(let i = 0;i<this.frequencyData.length;i++){
-          sound+=this.frequencyData[i];
-        }
-        sound = sound / this.frequencyData.length;
-        if(this.soundDash.device.desktop && sound > 100){
-          state.person.jump(sound);
-        }else if(sound > 50){
-          state.person.jump(sound*2);
-        }
-      }
-  }
-
-}
-/* harmony export (immutable) */ __webpack_exports__["App"] = App;
-
-
-
-const app = new App();
-
-
 /***/ })
-],[20]);
+],[9]);

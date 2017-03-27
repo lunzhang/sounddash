@@ -9,12 +9,12 @@ export default class GameState extends Phaser.State{
   create(){
 
     //person
-    this.person = new Person(this.game,this.game.world.centerX,this.game.world.centerY);
+    this.person = new Person(this.game,this.game.world.centerX/2,this.game.height-150);
     this.game.add.existing(this.person);
 
     //boxes
     this.boxGroup = new BoxGroup(this.game);
-    this.boxGenerator = this.game.time.events.loop(600,this.generateBox,this);
+    this.boxGenerator = this.game.time.events.loop(777,this.generateBox,this);
     this.boxGenerator.timer.start();
     this.generateBox();
 

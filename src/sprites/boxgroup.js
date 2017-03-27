@@ -20,7 +20,7 @@ export default class BoxGroup extends Phaser.Group{
 
     generateBoxes(){
         let box = this.getFirstDead();
-        let position = this.game.rnd.integerInRange(0,6);
+        let position = this.game.rnd.integerInRange(2,5);
         box.revive();
         box.position.x = 0;
         box.position.y = position * 50;
